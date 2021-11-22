@@ -12,11 +12,7 @@ const uploadFiles = async (req) =>
         uploadHandler(req, null, () => resolve({ success: true }))
     );
 
-/* The upload plugin. See the svelte.config.js file */
-const uploadPlugin = {
-    name: "upload-middleware",
-    configureServer(server) {
-        server.middlewares.use(async (req, res, next) => {
+export const uploadMiddleware = async (req, res, next) => {
             if (!req.url.startsWith("/upload")) return next();
 
             try {
@@ -29,7 +25,13 @@ const uploadPlugin = {
                 });
                 return res.end("upload plugin error: " + err);
             }
-        });
+        }
+
+/* The upload plugin. See the svelte.config.js file */
+const uploadPlugin = {
+    name: "upload-middleware",
+    configureServer(server) {
+        server.middlewares.use(uploadMiddleware);
     },
 };
 
